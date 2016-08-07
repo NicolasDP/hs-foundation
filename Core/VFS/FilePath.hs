@@ -37,7 +37,7 @@ module Core.VFS.FilePath
 import Core
 import Core.Internal.Base
 import Core.Collection
-import Core.String (UTF8(..), ValidationFailure, toBytes, fromBytes)
+import Core.String (Encoding(..), ValidationFailure, toBytes, fromBytes)
 import Core.VFS.Path(Path(..))
 
 import qualified Data.List
