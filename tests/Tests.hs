@@ -22,6 +22,7 @@ import qualified Data.List               as L
 import qualified Prelude
 
 import           ForeignUtils
+import           Encoding
 
 data Unicode = Unicode { unUnicode :: LString }
     deriving (Show)
@@ -458,7 +459,11 @@ tests =
         ]
     , testGroup "String"
         (  testCollection (Proxy :: Proxy String) arbitraryChar
-        <> testStringCases)
+        <> testStringCases
+        <> [ testGroup "Encoding Sample0" (testEncodings sample0)
+        -- , testGroup "Encoding Sample1" (testEncodings sample1)
+           ]
+        )
     , testGroup "VFS"
         [ testGroup "FilePath" $ testCaseFilePath <> (testPath (arbitrary :: Gen FilePath))
         ]
