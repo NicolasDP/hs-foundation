@@ -64,10 +64,14 @@ validate propertyName prop = Check $ do
             return ()
 
 pick :: String -> IO a -> Check a
-pick _ io = Check $ do
-    -- TODO catch most exception to report failures
-    r <- liftIO io
-    pure r
+pick pickName io = Check $ do
+    withState $ \st -> ( () , st { planValidations = planValidations st + 1 } )
+    catch (liftIO io) handler
+  where
+    handler (e :: SomeException) = withState $ \st ->
+        ( error $ fromList "attempt to pick value: " <> pickName
+        , st { planFailures = PropertyResult pickName 1 (PropertyFailed $ show e) : planFailures st }
+        )
 
 iterateProperty :: CountOf TestResult ->  GenParams -> (Word64 -> GenRng) -> Property -> IO (PropertyResult, CountOf TestResult)
 iterateProperty limit genParams genRngIter prop = iterProp 1

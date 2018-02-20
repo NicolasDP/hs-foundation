@@ -24,8 +24,9 @@ module Foundation.Check.Types
     , HasFailures
     ) where
 
-import           Basement.Imports
+import           Basement.Imports hiding (throw)
 import           Foundation.Collection
+import           Foundation.Monad
 import           Foundation.Monad.State
 import           Foundation.Check.Property
 import           Foundation.Check.Gen
@@ -58,6 +59,10 @@ newtype Check a = Check { runCheck :: StateT PlanState IO a }
 instance MonadState Check where
     type State Check = PlanState
     withState f = Check (withState f)
+instance MonadThrow Check where
+    throw = Check . throw
+instance MonadCatch Check where
+    catch (Check ma) handler = Check $ catch ma (runCheck . handler)
 
 -- | different type of tests supported
 data Test where
